@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>For Myat Noe — Coded White Roses &amp; Tulips</title>
+
+  <!-- Elegant serif for dedication & letter, crisp monospace for ASCII canvas -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================================
+       BASE & VIEWPORT RESET
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg-midnight: #050507;
+      --pearl-white: #ffffff;
+      --champagne-silver: #d6d2cc;
+      --warm-ivory: #f3ede4;
+      --blush-tint: #f4b4c2;
+      --glass-bg: rgba(16, 16, 22, 0.78);
+      --glass-border: rgba(255, 255, 255, 0.14);
+      --serif: 'Cormorant Garamond', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-midnight);
+      color: var(--pearl-white);
+      font-family: var(--serif);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    /* Full-bleed responsive ASCII canvas */
+    #bouquetCanvas {
+      position: fixed;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-midnight);
+      cursor: pointer;
+    }
+
+    /* =========================================================================
+       TOP DEDICATION HEADER
+       ========================================================================= */
+    .dedication-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: max(22px, calc(env(safe-area-inset-top) + 14px)) 20px 8px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 2.0s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 2.0s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .dedication-header.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .dedication-title {
+      margin: 0;
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(2.15rem, 7vw, 3.65rem);
+      line-height: 1.12;
+      letter-spacing: 0.035em;
+      color: #fffdfa;
+      text-shadow:
+        0 0 18px rgba(255, 245, 238, 0.42),
+        0 0 40px rgba(244, 180, 194, 0.22);
+      padding: 2px 12px;
+      border-radius: 12px;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: opacity 0.34s ease, transform 0.34s ease, text-shadow 0.3s ease;
+    }
+
+    .dedication-title:hover,
+    .dedication-title:focus-visible {
+      outline: none;
+      text-shadow:
+        0 0 24px rgba(255, 248, 242, 0.65),
+        0 0 48px rgba(244, 180, 194, 0.38);
+    }
+
+    .dedication-title.switching {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+
+    .dedication-subtitle {
+      margin: 8px 0 0;
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(0.98rem, 3.3vw, 1.24rem);
+      line-height: 1.55;
+      letter-spacing: 0.025em;
+      color: var(--champagne-silver);
+      max-width: min(460px, 88vw);
+      text-wrap: balance;
+      text-shadow: 0 1px 14px rgba(0, 0, 0, 0.72), 0 0 16px rgba(255, 240, 235, 0.14);
+    }
+
+    /* =========================================================================
+       BOTTOM FROSTED-GLASS CONTROL BAR (4 WORKING BUTTONS)
+       ========================================================================= */
+    .control-bar {
+      position: fixed;
+      left: 50%;
+      bottom: max(22px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 25;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: nowrap;
+      gap: 4px;
+      padding: 5px 6px;
+      max-width: calc(100vw - 20px);
+      border-radius: 9999px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow:
+        0 10px 32px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      font-family: var(--mono);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .control-bar:hover {
+      border-color: rgba(255, 235, 240, 0.24);
+      box-shadow:
+        0 12px 36px rgba(0, 0, 0, 0.65),
+        0 0 22px rgba(244, 180, 194, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10);
+    }
+
+    .bar-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 2px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .bar-divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.14);
+      margin: 0 2px;
+      flex-shrink: 0;
+    }
+
+    .bar-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 8px 11px;
+      border: 1px solid transparent;
+      border-radius: 9999px;
+      background: transparent;
+      color: rgba(235, 233, 230, 0.72);
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.015em;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background-color 0.25s ease, color 0.25s ease,
+                  border-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+    }
+
+    .bar-btn:active {
+      transform: scale(0.96);
+    }
+
+    .bar-btn:hover,
+    .bar-btn:focus-visible {
+      outline: none;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .bar-btn.is-active {
+      background: rgba(255, 248, 250, 0.18);
+      color: #ffffff;
+      border-color: rgba(255, 242, 246, 0.16);
+      box-shadow: 0 0 12px rgba(255, 240, 245, 0.10);
+    }
+
+    .bar-btn svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+    }
+
+    /* Inviting pearl-blush shimmer on the Letter button */
+    @keyframes letterShimmer {
+      0%, 100% {
+        border-color: rgba(244, 180, 194, 0.24);
+        box-shadow: 0 0 10px rgba(244, 180, 194, 0.10);
+        color: #f9e6ec;
+      }
+      50% {
+        border-color: rgba(249, 230, 236, 0.50);
+        box-shadow: 0 0 16px rgba(244, 180, 194, 0.28);
+        color: #ffffff;
+      }
+    }
+
+    .bar-btn--letter {
+      background: linear-gradient(135deg, rgba(244, 180, 194, 0.14), rgba(245, 234, 214, 0.10));
+      border-color: rgba(244, 180, 194, 0.26);
+      color: #f9e6ec;
+      animation: letterShimmer 3.8s ease-in-out infinite;
+    }
+
+    .bar-btn--letter:hover,
+    .bar-btn--letter:focus-visible {
+      background: linear-gradient(135deg, rgba(244, 180, 194, 0.24), rgba(245, 234, 214, 0.18));
+      border-color: rgba(255, 224, 234, 0.62);
+      color: #ffffff;
+    }
+
+    /* Compact sizing for narrow phones (e.g., iPhone SE / 360px) */
+    @media (max-width: 400px) {
+      .control-bar {
+        gap: 3px;
+        padding: 4px 5px;
+      }
+      .bar-btn {
+        padding: 7.5px 8.5px;
+        font-size: 10.5px;
+        gap: 4px;
+      }
+      .bar-btn svg {
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    /* =========================================================================
+       HEARTFELT LETTER MODAL (DARK LUXURY STATIONERY CARD)
+       ========================================================================= */
+    .letter-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(4, 4, 8, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+                  visibility 0.42s ease;
+    }
+
+    .letter-backdrop.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .letter-card {
+      position: relative;
+      width: 100%;
+      max-width: min(440px, 90vw);
+      max-height: min(84vh, 660px);
+      overflow-y: auto;
+      padding: 34px 30px 26px;
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at top right, rgba(244, 180, 194, 0.07), transparent 52%),
+        radial-gradient(circle at bottom left, rgba(245, 234, 214, 0.06), transparent 50%),
+        linear-gradient(165deg, rgba(20, 20, 26, 0.94) 0%, rgba(12, 12, 17, 0.96) 100%);
+      border: 1px solid rgba(245, 234, 214, 0.22);
+      box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.72),
+        0 0 36px rgba(244, 180, 194, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10);
+      color: var(--warm-ivory);
+      user-select: text;
+      -webkit-user-select: text;
+      transform: translateY(16px) scale(0.985);
+      opacity: 0;
+      transition: transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .letter-backdrop.is-open .letter-card {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    /* Subtle inner stationery frame border */
+    .letter-card::before {
+      content: '';
+      position: absolute;
+      inset: 9px;
+      border-radius: 13px;
+      border: 1px solid rgba(245, 234, 214, 0.09);
+      pointer-events: none;
+    }
+
+    /* Faint luxury corner ornaments */
+    .corner-ornament {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      pointer-events: none;
+      opacity: 0.48;
+    }
+
+    .corner-ornament--tl {
+      top: 15px;
+      left: 15px;
+      border-top: 1px solid rgba(245, 234, 214, 0.55);
+      border-left: 1px solid rgba(245, 234, 214, 0.55);
+      border-top-left-radius: 4px;
+    }
+
+    .corner-ornament--br {
+      bottom: 15px;
+      right: 15px;
+      border-bottom: 1px solid rgba(245, 234, 214, 0.55);
+      border-right: 1px solid rgba(245, 234, 214, 0.55);
+      border-bottom-right-radius: 4px;
+    }
+
+    /* Top-right close icon button */
+    .letter-close-icon {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 2;
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(243, 237, 228, 0.72);
+      font-size: 19px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+    }
+
+    .letter-close-icon:hover,
+    .letter-close-icon:focus-visible {
+      outline: none;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(245, 234, 214, 0.32);
+      color: #ffffff;
+    }
+
+    .letter-kicker {
+      margin: 0 0 10px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(244, 180, 194, 0.80);
+    }
+
+    .letter-greeting {
+      margin: 0 0 18px;
+      padding-right: 26px;
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(1.55rem, 5.2vw, 1.9rem);
+      line-height: 1.25;
+      letter-spacing: 0.02em;
+      color: #fffdfa;
+      text-shadow: 0 0 18px rgba(245, 234, 214, 0.20);
+    }
+
+    .letter-rule {
+      width: 44px;
+      height: 1px;
+      margin: 0 0 20px;
+      background: linear-gradient(90deg, rgba(244, 180, 194, 0.65), rgba(245, 234, 214, 0.12));
+    }
+
+    .letter-body {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(1.08rem, 3.7vw, 1.2rem);
+      line-height: 1.72;
+      letter-spacing: 0.012em;
+      color: rgba(243, 237, 228, 0.92);
+    }
+
+    .letter-body p {
+      margin: 0 0 16px;
+    }
+
+    .letter-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .letter-flourish {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-top: 14px;
+      padding-right: 4px;
+      font-family: var(--serif);
+      font-size: 1.28rem;
+      color: rgba(244, 180, 194, 0.86);
+      text-shadow: 0 0 12px rgba(244, 180, 194, 0.32);
+    }
+
+    .letter-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .letter-close-btn {
+      padding: 9px 26px;
+      border-radius: 9999px;
+      border: 1px solid rgba(245, 234, 214, 0.24);
+      background: rgba(255, 255, 255, 0.06);
+      color: #fffdfa;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background-color 0.24s ease, border-color 0.24s ease, transform 0.15s ease;
+    }
+
+    .letter-close-btn:hover,
+    .letter-close-btn:focus-visible {
+      outline: none;
+      background: rgba(244, 180, 194, 0.16);
+      border-color: rgba(244, 180, 194, 0.45);
+    }
+
+    .letter-close-btn:active {
+      transform: scale(0.97);
+    }
+
+    @media (max-width: 420px) {
+      .letter-card {
+        padding: 28px 22px 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- High-DPI 3D Z-Buffer ASCII Canvas -->
+  <canvas id="bouquetCanvas" aria-label="Blooming 3D ASCII White Roses and Tulips bouquet"></canvas>
+
+  <!-- Centered Top Dedication Header -->
+  <header id="dedicationHeader" class="dedication-header">
+    <h1
+      id="dedicationTitle"
+      class="dedication-title"
+      role="button"
+      tabindex="0"
+      title="Tap to switch between For Myat Noe and For Mama"
+    >For Myat Noe</h1>
+    <p class="dedication-subtitle">
+      Can’t give you a real bouquet for now, but here’s a coded white roses and tulips bouquet that you love 💕
+    </p>
+  </header>
+
+  <!-- Centered 4-Button Frosted-Glass Bottom Control Bar -->
+  <nav id="controlBar" class="control-bar" aria-label="Bouquet controls">
+    <div class="bar-group" role="group" aria-label="Dedication recipient">
+      <button id="btnMyatNoe" type="button" class="bar-btn is-active">Myat Noe</button>
+      <button id="btnMama" type="button" class="bar-btn">Mama</button>
+    </div>
+
+    <span class="bar-divider" aria-hidden="true"></span>
+
+    <button id="btnLetter" type="button" class="bar-btn bar-btn--letter" aria-haspopup="dialog" aria-controls="letterModal">
+      <!-- Minimal delicate envelope SVG icon -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2.5" y="4.5" width="19" height="15" rx="2.5"></rect>
+        <path d="M3.5 6.5 12 13l8.5-6.5"></path>
+      </svg>
+      <span>Letter</span>
+    </button>
+
+    <button id="btnReplay" type="button" class="bar-btn" aria-label="Replay blooming animation">
+      <!-- Minimal circular replay arrow SVG icon -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path>
+        <path d="M3 3v5h5"></path>
+      </svg>
+      <span>Replay</span>
+    </button>
+  </nav>
+
+  <!-- Heartfelt Letter Modal -->
+  <div
+    id="letterModal"
+    class="letter-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="letterGreeting"
+    aria-hidden="true"
+  >
+    <article id="letterCard" class="letter-card">
+      <span class="corner-ornament corner-ornament--tl" aria-hidden="true"></span>
+      <span class="corner-ornament corner-ornament--br" aria-hidden="true"></span>
+
+      <button id="btnCloseLetterTop" type="button" class="letter-close-icon" aria-label="Close letter">
+        &times;
+      </button>
+
+      <p class="letter-kicker">A Note For You</p>
+      <h2 id="letterGreeting" class="letter-greeting">Dear May Maya Myat Noe,</h2>
+      <div class="letter-rule" aria-hidden="true"></div>
+
+      <div class="letter-body">
+        <p>
+          I truly loved you back then—and now that we’ve found our way back to each other, my love for you hasn’t faded even a little bit.
+        </p>
+        <p>
+          Because I know we can’t be together, I don’t want to push things too far forward. I believe keeping what we have just like this is for the best—I just don’t want to hurt the way I did before.
+        </p>
+        <p>
+          Even so, I’ll still try to stay close to you. Maybe fate will finally smile on us, just this once.
+        </p>
+      </div>
+
+      <div class="letter-flourish" aria-hidden="true">♡</div>
+
+      <div class="letter-actions">
+        <button id="btnCloseLetterBottom" type="button" class="letter-close-btn">Close</button>
+      </div>
+    </article>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // 1. DOM ELEMENTS, DEDICATION STATE (?to= URL PARAM) & LETTER MODAL
+      // =========================================================================
+      const canvas = document.getElementById('bouquetCanvas');
+      const ctx = canvas.getContext('2d', { alpha: false });
+      const headerEl = document.getElementById('dedicationHeader');
+      const titleEl = document.getElementById('dedicationTitle');
+      const controlBarEl = document.getElementById('controlBar');
+
+      const btnMyatNoe = document.getElementById('btnMyatNoe');
+      const btnMama = document.getElementById('btnMama');
+      const btnLetter = document.getElementById('btnLetter');
+      const btnReplay = document.getElementById('btnReplay');
+
+      const letterModal = document.getElementById('letterModal');
+      const letterCard = document.getElementById('letterCard');
+      const btnCloseLetterTop = document.getElementById('btnCloseLetterTop');
+      const btnCloseLetterBottom = document.getElementById('btnCloseLetterBottom');
+
+      let currentRecipientMode = 'myatnoe'; // 'myatnoe' | 'mama' | 'custom'
+      let customRecipientName = '';
+      let titleFadeTimer = null;
+      let isLetterOpen = false;
+
+      /**
+       * Reads ?to= from the URL so shareable links can open directly
+       * to "For Myat Noe", "For Mama", or any custom recipient name.
+       */
+      function initRecipientFromURL() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const raw = params.get('to');
+          if (!raw) {
+            applyRecipient('myatnoe', false);
+            return;
+          }
+          const cleaned = raw
+            .replace(/[\r\n\t<>]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .slice(0, 38);
+
+          if (!cleaned) {
+            applyRecipient('myatnoe', false);
+            return;
+          }
+          const lower = cleaned.toLowerCase();
+          if (lower === 'mama' || lower === 'mom' || lower === 'mother') {
+            applyRecipient('mama', false);
+          } else if (lower === 'myatnoe' || lower === 'myat noe') {
+            applyRecipient('myatnoe', false);
+          } else {
+            customRecipientName = cleaned;
+            applyRecipient('custom', false);
+          }
+        } catch (err) {
+          applyRecipient('myatnoe', false);
+        }
+      }
+
+      /**
+       * Smoothly updates the dedication heading and active pill state.
+       */
+      function applyRecipient(mode, animate) {
+        currentRecipientMode = mode;
+        const label =
+          mode === 'mama'
+            ? 'For Mama'
+            : mode === 'custom' && customRecipientName
+            ? 'For ' + customRecipientName
+            : 'For Myat Noe';
+
+        document.title = label + ' — Coded White Roses & Tulips';
+        btnMyatNoe.classList.toggle('is-active', mode === 'myatnoe');
+        btnMama.classList.toggle('is-active', mode === 'mama');
+
+        if (!animate) {
+          titleEl.textContent = label;
+          return;
+        }
+
+        if (titleFadeTimer) clearTimeout(titleFadeTimer);
+        titleEl.classList.add('switching');
+        titleFadeTimer = setTimeout(function () {
+          titleEl.textContent = label;
+          titleEl.classList.remove('switching');
+        }, 210);
+      }
+
+      function toggleRecipient() {
+        applyRecipient(currentRecipientMode === 'mama' ? 'myatnoe' : 'mama', true);
+      }
+
+      function openLetterModal() {
+        isLetterOpen = true;
+        letterModal.classList.add('is-open');
+        letterModal.setAttribute('aria-hidden', 'false');
+        btnCloseLetterBottom.focus({ preventScroll: true });
+      }
+
+      function closeLetterModal() {
+        isLetterOpen = false;
+        letterModal.classList.remove('is-open');
+        letterModal.setAttribute('aria-hidden', 'true');
+        btnLetter.focus({ preventScroll: true });
+      }
+
+      // =========================================================================
+      // 2. HIGH-DPI CHARACTER-GRID Z-BUFFER ASCII ENGINE
+      // =========================================================================
+      // Compact glyph table supporting ASCII shading ramp, botanical strokes & starlight
+      const GLYPHS = [
+        ' ', // 0: empty / occlusion mask
+        '.', // 1
+        ':', // 2
+        '-', // 3
+        '=', // 4
+        '+', // 5
+        '*', // 6
+        '#', // 7
+        '%', // 8
+        '@', // 9
+        '/', // 10: right-leaning stem/leaf
+        '|', // 11: vertical stem/leaf
+        '\\', // 12: left-leaning stem/leaf
+        '·', // 13: delicate baby's breath / dust
+        '✦'  // 14: crisp starlight glimmer
+      ];
+
+      const GLYPH_SPACE = 0;
+      const GLYPH_SLASH = 10;
+      const GLYPH_PIPE = 11;
+      const GLYPH_BSLASH = 12;
+      const GLYPH_MIDDOT = 13;
+      const GLYPH_STAR4 = 14;
+
+      // Quantized 15-bit RGB string cache (zero string allocation per frame)
+      const COLOR_CACHE = new Array(32768);
+      function getColorString(key) {
+        let str = COLOR_CACHE[key];
+        if (str === undefined) {
+          const r = ((key >> 10) & 31) * 8 + 4;
+          const g = ((key >> 5) & 31) * 8 + 4;
+          const b = (key & 31) * 8 + 4;
+          str = `rgb(${r > 255 ? 255 : r},${g > 255 ? 255 : g},${b > 255 ? 255 : b})`;
+          COLOR_CACHE[key] = str;
+        }
+        return str;
+      }
+
+      function packColor(r, g, b) {
+        const rr = r < 0 ? 0 : r > 255 ? 255 : r;
+        const gg = g < 0 ? 0 : g > 255 ? 255 : g;
+        const bb = b < 0 ? 0 : b > 255 ? 255 : b;
+        return ((rr >> 3) << 10) | ((gg >> 3) << 5) | (bb >> 3);
+      }
+
+      // Viewport & grid buffers
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      let fontSize = 8;
+      let cellW = 5.0;
+      let cellH = 8.0;
+      let cols = 100;
+      let rows = 80;
+      let gridSize = 8000;
+      let gridOffsetX = 0;
+      let gridOffsetY = 0;
+
+      let zBuf = new Float32Array(gridSize);
+      let glyphBuf = new Uint8Array(gridSize);
+      let colorBuf = new Uint16Array(gridSize);
+      let dirtyCells = new Int32Array(gridSize);
+      let dirtyCount = 0;
+
+      // Bouquet screen projection anchor & uniform scale
+      let anchorX = width * 0.5;
+      let anchorY = height * 0.78;
+      let bouquetScale = 300;
+
+      /**
+       * Allocates the responsive Z-buffer character grid for crisp rendering
+       * on both narrow mobile screens and wide desktop monitors.
+       */
+      function allocateGrid() {
+        const isPortrait = height > width;
+        const targetFont = isPortrait
+          ? clamp(width / 52, 6.8, 8.6)
+          : clamp(Math.min(width / 122, height / 86), 7.4, 9.4);
+
+        fontSize = targetFont;
+        cellH = Math.max(6.8, fontSize * 1.02);
+        cellW = Math.max(4.2, fontSize * 0.60);
+
+        cols = Math.ceil(width / cellW);
+        rows = Math.ceil(height / cellH);
+        gridSize = cols * rows;
+        gridOffsetX = (width - cols * cellW) * 0.5 + cellW * 0.5;
+        gridOffsetY = (height - rows * cellH) * 0.5 + cellH * 0.5;
+
+        zBuf = new Float32Array(gridSize);
+        glyphBuf = new Uint8Array(gridSize);
+        colorBuf = new Uint16Array(gridSize);
+        dirtyCells = new Int32Array(gridSize);
+        zBuf.fill(-1e9);
+        dirtyCount = 0;
+      }
+
+      /**
+       * Resets only the cells written in the previous frame for 60fps efficiency.
+       */
+      function clearGrid() {
+        for (let i = 0; i < dirtyCount; i++) {
+          zBuf[dirtyCells[i]] = -1e9;
+        }
+        dirtyCount = 0;
+      }
+
+      /**
+       * Plots a single 3D shaded character into the Z-buffer grid.
+       * Passing glyphIdx === 0 acts as an invisible 3D depth-occlusion mask.
+       */
+      function plotCell(sx, sy, z, r, g, b, glyphIdx) {
+        const col = Math.floor((sx - gridOffsetX + cellW * 0.5) / cellW);
+        const row = Math.floor((sy - gridOffsetY + cellH * 0.5) / cellH);
+        if (col < 0 || col >= cols || row < 0 || row >= rows) return;
+
+        const idx = row * cols + col;
+        const prevZ = zBuf[idx];
+        if (z <= prevZ) return;
+
+        if (prevZ <= -1e8) {
+          dirtyCells[dirtyCount++] = idx;
+        }
+        zBuf[idx] = z;
+        glyphBuf[idx] = glyphIdx;
+        colorBuf[idx] = glyphIdx === 0 ? 0 : packColor(r, g, b);
+      }
+
+      /**
+       * Maps luminance [0..1] into the 9-step ASCII density ramp ('.:-=+*#%@').
+       */
+      function lumToGlyph(lum) {
+        return clamp(Math.floor(lum * 8.99) + 1, 1, 9);
+      }
+
+      /**
+       * Renders every visible cell in the Z-buffer to the high-DPI canvas.
+       */
+      function flushGridToCanvas() {
+        ctx.font = `600 ${fontSize.toFixed(1)}px "JetBrains Mono", monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        let lastColorKey = -1;
+        for (let i = 0; i < dirtyCount; i++) {
+          const idx = dirtyCells[i];
+          const gIdx = glyphBuf[idx];
+          if (gIdx === GLYPH_SPACE) continue;
+
+          const ck = colorBuf[idx];
+          if (ck !== lastColorKey) {
+            ctx.fillStyle = getColorString(ck);
+            lastColorKey = ck;
+          }
+
+          const row = (idx / cols) | 0;
+          const col = idx - row * cols;
+          ctx.fillText(GLYPHS[gIdx], gridOffsetX + col * cellW, gridOffsetY + row * cellH);
+        }
+      }
+
+      // =========================================================================
+      // 3. MATH & EASING UTILITIES
+      // =========================================================================
+      function clamp(v, min, max) {
+        return v < min ? min : v > max ? max : v;
+      }
+
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+
+      function easeOutCubic(t) {
+        t = clamp(t, 0, 1);
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function easeInOutCubic(t) {
+        t = clamp(t, 0, 1);
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
+      function hash2D(a, b) {
+        const s = Math.sin(a * 127.1 + b * 311.7) * 43758.5453123;
+        return s - Math.floor(s);
+      }
+
+      function quadBezier(p0, p1, p2, t) {
+        const u = 1 - t;
+        return {
+          x: u * u * p0.x + 2 * u * t * p1.x + t * t * p2.x,
+          y: u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y
+        };
+      }
+
+      function quadBezierTangent(p0, p1, p2, t) {
+        const u = 1 - t;
+        return {
+          x: 2 * u * (p1.x - p0.x) + 2 * t * (p2.x - p1.x),
+          y: 2 * u * (p1.y - p0.y) + 2 * t * (p2.y - p1.y)
+        };
+      }
+
+      // =========================================================================
+      // 4. ROMANTIC FLORAL PALETTES (RADIANT WHITE ROSES & SOFT CUPPED TULIPS)
+      // =========================================================================
+      const ROSE_PALETTE = {
+        snow:       [255, 255, 255], // #ffffff radiant rolled petal rim
+        pearl:      [235, 232, 226], // #ebe8e2 soft luminous pearl body
+        champagne:  [245, 234, 214], // #f5ead6 warm champagne-ivory heart
+        warmShade:  [192, 181, 166], // soft warm inner heart crevice
+        slateMid:   [143, 150, 163], // #8f96a3 cool silver-slate fold
+        slateDeep:  [74,   82,  98]  // deep sculptural fold shadow
+      };
+
+      const TULIP_PALETTES = {
+        blushPink: {
+          base:   [168,  72, 102],
+          shadow: [204, 114, 140],
+          mid:    [244, 180, 194], // #f4b4c2 soft blush pink
+          rim:    [255, 224, 234]
+        },
+        dustyRose: {
+          base:   [138,  52,  78],
+          shadow: [180,  86, 114],
+          mid:    [217, 125, 150], // #d97d96 dusty rose
+          rim:    [252, 192, 210]
+        },
+        creamyBlush: {
+          base:   [172, 152, 160],
+          shadow: [216, 196, 204],
+          mid:    [249, 230, 236], // #f9e6ec creamy white with blush tips
+          rim:    [255, 210, 224]
+        },
+        peachChampagne: {
+          base:   [176, 108,  82],
+          shadow: [212, 148, 120],
+          mid:    [242, 197, 168], // #f2c5a8 warm peach-champagne
+          rim:    [255, 234, 216]
+        }
+      };
+
+      // =========================================================================
+      // 5. BOUQUET ARCHITECTURE (5 FOCAL WHITE ROSES + 7 CUPPED TULIPS)
+      // Coordinates: (0, 0) is the pearl ribbon tie; negative Y rises upward.
+      // =========================================================================
+      const BLOOM_SPECS = [
+        // --- 7 GRACEFUL CUPPED TULIPS (framing crown & sides) ---
+        {
+          id: 0, type: 'tulip', palette: 'blushPink',
+          tipX: 0.00, tipY: -0.94, ctrlX: -0.02, ctrlY: -0.48, baseX: 0.00,
+          scale: 0.148, z: -0.14, lean: -0.04, tiltFwd: 0.15, rot: 0.28,
+          bloomStart: 1.45, bloomDur: 1.50
+        },
+        {
+          id: 1, type: 'tulip', palette: 'creamyBlush',
+          tipX: -0.24, tipY: -0.84, ctrlX: -0.14, ctrlY: -0.43, baseX: -0.02,
+          scale: 0.144, z: -0.10, lean: -0.26, tiltFwd: 0.14, rot: 0.78,
+          bloomStart: 1.62, bloomDur: 1.50
+        },
+        {
+          id: 2, type: 'tulip', palette: 'peachChampagne',
+          tipX: 0.25, tipY: -0.83, ctrlX: 0.15, ctrlY: -0.43, baseX: 0.02,
+          scale: 0.144, z: -0.08, lean: 0.27, tiltFwd: 0.14, rot: -0.42,
+          bloomStart: 1.76, bloomDur: 1.50
+        },
+        {
+          id: 3, type: 'tulip', palette: 'dustyRose',
+          tipX: -0.44, tipY: -0.65, ctrlX: -0.24, ctrlY: -0.32, baseX: -0.03,
+          scale: 0.140, z: -0.02, lean: -0.48, tiltFwd: 0.10, rot: 0.18,
+          bloomStart: 1.94, bloomDur: 1.45
+        },
+        {
+          id: 4, type: 'tulip', palette: 'blushPink',
+          tipX: 0.45, tipY: -0.64, ctrlX: 0.24, ctrlY: -0.32, baseX: 0.03,
+          scale: 0.140, z: 0.00, lean: 0.48, tiltFwd: 0.10, rot: -0.58,
+          bloomStart: 2.08, bloomDur: 1.45
+        },
+        {
+          id: 5, type: 'tulip', palette: 'peachChampagne',
+          tipX: -0.41, tipY: -0.37, ctrlX: -0.21, ctrlY: -0.18, baseX: -0.03,
+          scale: 0.134, z: 0.12, lean: -0.56, tiltFwd: 0.07, rot: 0.45,
+          bloomStart: 2.40, bloomDur: 1.40
+        },
+        {
+          id: 6, type: 'tulip', palette: 'dustyRose',
+          tipX: 0.42, tipY: -0.36, ctrlX: 0.21, ctrlY: -0.18, baseX: 0.03,
+          scale: 0.134, z: 0.14, lean: 0.56, tiltFwd: 0.07, rot: -0.34,
+          bloomStart: 2.52, bloomDur: 1.40
+        },
+
+        // --- 5 FOCAL SPIRALING WHITE ROSES (radiant sculptural centerpiece) ---
+        {
+          id: 7, type: 'rose',
+          tipX: 0.00, tipY: -0.64, ctrlX: 0.01, ctrlY: -0.32, baseX: 0.00,
+          scale: 0.150, z: 0.24, tiltX: 0.02, tiltY: 0.10, rot: 0.35,
+          petals: 36, bloomStart: 1.38, bloomDur: 1.90
+        },
+        {
+          id: 8, type: 'rose',
+          tipX: -0.27, tipY: -0.51, ctrlX: -0.15, ctrlY: -0.25, baseX: -0.02,
+          scale: 0.130, z: 0.32, tiltX: -0.24, tiltY: 0.06, rot: 1.42,
+          petals: 32, bloomStart: 1.72, bloomDur: 1.85
+        },
+        {
+          id: 9, type: 'rose',
+          tipX: 0.27, tipY: -0.50, ctrlX: 0.15, ctrlY: -0.25, baseX: 0.02,
+          scale: 0.130, z: 0.34, tiltX: 0.24, tiltY: 0.06, rot: 2.18,
+          petals: 32, bloomStart: 1.88, bloomDur: 1.85
+        },
+        {
+          id: 10, type: 'rose',
+          tipX: -0.145, tipY: -0.32, ctrlX: -0.08, ctrlY: -0.15, baseX: -0.01,
+          scale: 0.132, z: 0.48, tiltX: -0.13, tiltY: -0.05, rot: 0.88,
+          petals: 32, bloomStart: 2.22, bloomDur: 1.80
+        },
+        {
+          id: 11, type: 'rose',
+          tipX: 0.15, tipY: -0.31, ctrlX: 0.08, ctrlY: -0.15, baseX: 0.01,
+          scale: 0.132, z: 0.52, tiltX: 0.14, tiltY: -0.05, rot: 2.65,
+          petals: 32, bloomStart: 2.38, bloomDur: 1.80
+        }
+      ];
+
+      // Precomputed botanical structures
+      const stems = [];
+      const tulipLeaves = [];
+      const roseLeafClusters = [];
+      const babysBreath = [];
+
+      // Ambient starfield & interactive particles
+      let bgStars = [];
+      const ambientSparkles = [];
+      const burstParticles = [];
+
+      // =========================================================================
+      // 6. BOTANICAL GEOMETRY BUILDER
+      // =========================================================================
+      function buildBotanicals() {
+        stems.length = 0;
+        tulipLeaves.length = 0;
+        roseLeafClusters.length = 0;
+        babysBreath.length = 0;
+
+        // 1. Stems converging through the pearl ribbon tie (y = 0.02) to cut ends
+        BLOOM_SPECS.forEach((spec, idx) => {
+          const cutX = -spec.tipX * 0.16 + spec.baseX * 0.55;
+          const cutY = 0.18 + hash2D(idx, 3) * 0.024;
+          const waistX = spec.baseX * 0.62;
+          const waistY = 0.02;
+
+          stems.push({
+            spec,
+            lowP0: { x: cutX, y: cutY },
+            lowP1: { x: (cutX + waistX) * 0.5, y: 0.10 },
+            lowP2: { x: waistX, y: waistY },
+            upP0: { x: waistX, y: waistY },
+            upP1: { x: spec.ctrlX, y: spec.ctrlY },
+            upP2: { x: spec.tipX, y: spec.tipY },
+            growDelay: idx * 0.042,
+            growDur: 1.22
+          });
+        });
+
+        // 2. Arching emerald-sage tulip leaves rising from the stem waist
+        const tulipLeafSpecs = [
+          { side: -1, startX: -0.03, angle: -2.18, len: 0.52, arch: 0.17, width: 0.054, z: -0.06, delay: 0.34 },
+          { side:  1, startX:  0.03, angle: -0.96, len: 0.52, arch: 0.17, width: 0.054, z: -0.05, delay: 0.38 },
+          { side: -1, startX: -0.04, angle: -2.42, len: 0.44, arch: 0.15, width: 0.048, z:  0.06, delay: 0.48 },
+          { side:  1, startX:  0.04, angle: -0.72, len: 0.44, arch: 0.15, width: 0.048, z:  0.08, delay: 0.52 },
+          { side: -1, startX: -0.02, angle: -1.85, len: 0.56, arch: 0.10, width: 0.046, z: -0.18, delay: 0.44 },
+          { side:  1, startX:  0.02, angle: -1.28, len: 0.56, arch: 0.10, width: 0.046, z: -0.16, delay: 0.46 },
+          { side: -1, startX: -0.02, angle: -2.58, len: 0.33, arch: 0.12, width: 0.044, z:  0.22, delay: 0.66 },
+          { side:  1, startX:  0.02, angle: -0.56, len: 0.33, arch: 0.12, width: 0.044, z:  0.24, delay: 0.70 }
+        ];
+
+        tulipLeafSpecs.forEach((ls, i) => {
+          const p0 = { x: ls.startX, y: 0.01 };
+          const p1 = {
+            x: ls.startX + Math.cos(ls.angle) * ls.len * 0.52,
+            y: 0.01 + Math.sin(ls.angle) * ls.len * 0.68
+          };
+          const p2 = {
+            x: ls.startX + Math.cos(ls.angle) * ls.len + ls.side * 0.06,
+            y: 0.01 + Math.sin(ls.angle) * ls.len + ls.arch
+          };
+          tulipLeaves.push({
+            p0, p1, p2,
+            maxWidth: ls.width,
+            z: ls.z,
+            delay: ls.delay,
+            dur: 1.02,
+            seed: i * 13.7
+          });
+        });
+
+        // 3. Classic oval 3-leaflet rose sprigs framing the roses
+        const roseClusterSpecs = [
+          { x: -0.08, y: -0.15, angle: -2.25, scale: 0.084, z: 0.30, delay: 0.74 },
+          { x:  0.09, y: -0.14, angle: -0.88, scale: 0.084, z: 0.31, delay: 0.78 },
+          { x: -0.01, y: -0.20, angle: -1.55, scale: 0.074, z: 0.32, delay: 0.84 },
+          { x: -0.26, y: -0.34, angle: -2.45, scale: 0.078, z: 0.20, delay: 0.80 },
+          { x:  0.27, y: -0.33, angle: -0.68, scale: 0.078, z: 0.21, delay: 0.82 },
+          { x: -0.16, y: -0.67, angle: -2.10, scale: 0.074, z: 0.14, delay: 0.88 },
+          { x:  0.17, y: -0.66, angle: -1.04, scale: 0.074, z: 0.15, delay: 0.90 },
+          { x: -0.35, y: -0.48, angle: -2.62, scale: 0.070, z: 0.10, delay: 0.92 },
+          { x:  0.36, y: -0.47, angle: -0.52, scale: 0.070, z: 0.11, delay: 0.94 }
+        ];
+
+        roseClusterSpecs.forEach((rc, i) => {
+          roseLeafClusters.push({
+            x: rc.x,
+            y: rc.y,
+            angle: rc.angle,
+            scale: rc.scale,
+            z: rc.z,
+            delay: rc.delay,
+            dur: 0.82,
+            seed: i * 19.3
+          });
+        });
+
+        // 4. Twinkling white Baby's Breath clusters tucked around the bouquet
+        const breathAnchors = [
+          { x: -0.14, y: -0.84, r: 0.075, z: 0.04 },
+          { x:  0.14, y: -0.83, r: 0.075, z: 0.04 },
+          { x: -0.38, y: -0.74, r: 0.085, z: 0.05 },
+          { x:  0.39, y: -0.73, r: 0.085, z: 0.05 },
+          { x: -0.50, y: -0.49, r: 0.085, z: 0.10 },
+          { x:  0.51, y: -0.48, r: 0.085, z: 0.10 },
+          { x: -0.31, y: -0.24, r: 0.075, z: 0.28 },
+          { x:  0.32, y: -0.23, r: 0.075, z: 0.28 },
+          { x: -0.14, y: -0.50, r: 0.052, z: 0.38 },
+          { x:  0.14, y: -0.49, r: 0.052, z: 0.39 },
+          { x:  0.00, y: -0.44, r: 0.050, z: 0.44 },
+          { x:  0.00, y: -0.80, r: 0.068, z: 0.12 }
+        ];
+
+        const breathGlyphs = [6, GLYPH_MIDDOT, 5, GLYPH_STAR4]; // '*', '·', '+', '✦'
+        breathAnchors.forEach((ba, i) => {
+          const dots = [];
+          const count = 7 + (i % 4);
+          for (let d = 0; d < count; d++) {
+            const ang = hash2D(i * 11, d * 5) * Math.PI * 2;
+            const dist = (0.24 + hash2D(d * 7, i * 3) * 0.76) * ba.r;
+            dots.push({
+              dx: Math.cos(ang) * dist,
+              dy: Math.sin(ang) * dist,
+              dz: (hash2D(i, d) - 0.5) * 0.04,
+              glyphIdx: breathGlyphs[d % breathGlyphs.length],
+              phase: hash2D(i * 3, d * 13) * Math.PI * 2,
+              delay: 2.80 + hash2D(i, d * 9) * 1.25
+            });
+          }
+          babysBreath.push({ x: ba.x, y: ba.y, z: ba.z, dots });
+        });
+      }
+
+      // =========================================================================
+      // 7. STARLIGHT BACKDROP & INTERACTIVE SPARKLES
+      // =========================================================================
+      function initStarfield() {
+        const count = clamp(Math.floor((width * height) / 7800), 68, 150);
+        bgStars = [];
+        const chars = ['.', '·', '*', '✦'];
+        for (let i = 0; i < count; i++) {
+          const roll = Math.random();
+          bgStars.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 2.4,
+            vy: -1.4 - Math.random() * 3.8,
+            char: roll < 0.52 ? chars[0] : roll < 0.80 ? chars[1] : roll < 0.94 ? chars[2] : chars[3],
+            size: 7 + Math.random() * 3.4,
+            phase: Math.random() * Math.PI * 2,
+            speed: 0.75 + Math.random() * 1.45,
+            alpha: 0.14 + Math.random() * 0.40
+          });
+        }
+      }
+
+      function spawnAmbientSparkle() {
+        const ang = Math.random() * Math.PI * 2;
+        const rad = (0.14 + Math.random() * 0.45) * bouquetScale;
+        const tints = [
+          [255, 255, 255],
+          [249, 230, 236],
+          [245, 234, 214],
+          [244, 180, 194]
+        ];
+        const col = tints[Math.floor(Math.random() * tints.length)];
+        const chars = ['*', '·', '✦', '.'];
+
+        ambientSparkles.push({
+          x: anchorX + Math.cos(ang) * rad * 0.92,
+          y: anchorY - bouquetScale * 0.54 + Math.sin(ang) * rad * 0.72,
+          vx: (Math.random() - 0.5) * 9,
+          vy: -11 - Math.random() * 17,
+          life: 0,
+          maxLife: 2.3 + Math.random() * 2.1,
+          char: chars[Math.floor(Math.random() * chars.length)],
+          color: col,
+          size: 8 + Math.random() * 3.5
+        });
+      }
+
+      function spawnTapBurst(clientX, clientY) {
+        const chars = ['*', '·', '✦', '.'];
+        const colors = [
+          [255, 255, 255],
+          [244, 180, 194],
+          [245, 234, 214],
+          [249, 230, 236]
+        ];
+        const count = 24;
+
+        for (let i = 0; i < count; i++) {
+          const ang = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.36;
+          const spd = 24 + Math.random() * 72;
+          burstParticles.push({
+            x: clientX,
+            y: clientY,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd - 16,
+            life: 0,
+            maxLife: 0.9 + Math.random() * 0.95,
+            char: chars[Math.floor(Math.random() * chars.length)],
+            color: colors[Math.floor(Math.random() * colors.length)],
+            size: 8.5 + Math.random() * 4.5
+          });
+        }
+
+        // Send a gentle decaying breeze ripple through stems and blooms
+        breezeImpulseDir = clientX < anchorX ? 1 : -1;
+        breezeImpulse = Math.min(1.35, breezeImpulse + 0.92);
+      }
+
+      // =========================================================================
+      // 8. SWAY & WIND PHYSICS
+      // =========================================================================
+      let startTime = 0;
+      let lastTimestamp = 0;
+      let elapsed = 0;
+      let headerShown = false;
+
+      let breezeImpulse = 0;
+      let breezeImpulseDir = 1;
+      let targetPointerWind = 0;
+      let currentPointerWind = 0;
+
+      /**
+       * Smooth harmonic sway anchored at the pearl ribbon tie (y = 0.02).
+       */
+      function getSwayX(time, normY, normX) {
+        if (normY >= 0.02) {
+          return -currentPointerWind * 0.007 * (normY - 0.02);
+        }
+        const h = Math.pow(clamp(-normY, 0, 1.25), 1.32);
+        const harmonic =
+          Math.sin(time * 1.1 + normX * 1.55 + normY * 1.75) * 0.013 +
+          Math.sin(time * 0.56 + 1.1) * 0.0065;
+        const ripple =
+          Math.sin(time * 4.5 + normY * 4.0 + normX * 2.0) * breezeImpulse * 0.026 * breezeImpulseDir;
+        const pointer = currentPointerWind * 0.024;
+        return (harmonic + ripple + pointer) * h;
+      }
+
+      // =========================================================================
+      // 9. Z-BUFFER RASTERIZERS (STEMS, RIBBON, FOLIAGE, WHITE ROSES, TULIPS)
+      // =========================================================================
+
+      /**
+       * Rasterizes emerald/sage stems (#3a6e4c -> #5ea373 -> #86c998)
+       * and the delicate pearl-white satin ribbon wrap at the stem base.
+       */
+      function rasterizeStemsAndRibbon(time) {
+        const stepCount = Math.max(40, Math.round(bouquetScale * 0.17));
+
+        for (let i = 0; i < stems.length; i++) {
+          const st = stems[i];
+          const progress = easeOutCubic((time - st.growDelay) / st.growDur);
+          if (progress <= 0) continue;
+
+          // Lower segment (cut ends -> ribbon tie)
+          const lowProg = clamp(progress / 0.24, 0, 1);
+          const lowSteps = 12;
+          for (let s = 0; s <= lowSteps; s++) {
+            const t = s / lowSteps;
+            if (t > lowProg) break;
+            const pt = quadBezier(st.lowP0, st.lowP1, st.lowP2, t);
+            const tan = quadBezierTangent(st.lowP0, st.lowP1, st.lowP2, t);
+            const sway = getSwayX(time, pt.y, pt.x);
+
+            const sx = anchorX + (pt.x + sway) * bouquetScale;
+            const sy = anchorY + pt.y * bouquetScale;
+            const baseZ = st.spec.z * 0.22 - 0.06;
+
+            const slope = tan.x / (Math.abs(tan.y) + 0.001);
+            const stemGlyph = slope > 0.24 ? GLYPH_SLASH : slope < -0.24 ? GLYPH_BSLASH : GLYPH_PIPE;
+
+            plotCell(sx, sy, baseZ, 68, 130, 88, stemGlyph);
+            plotCell(sx + cellW * 0.62, sy, baseZ - 0.01, 44, 88, 60, 2); // ':' shadow
+          }
+
+          // Upper segment (ribbon tie -> flower head)
+          const upProg = clamp((progress - 0.15) / 0.85, 0, 1);
+          if (upProg <= 0) continue;
+
+          for (let s = 0; s <= stepCount; s++) {
+            const t = s / stepCount;
+            if (t > upProg) break;
+
+            const pt = quadBezier(st.upP0, st.upP1, st.upP2, t);
+            const tan = quadBezierTangent(st.upP0, st.upP1, st.upP2, t);
+            const sway = getSwayX(time, pt.y, pt.x);
+
+            const sx = anchorX + (pt.x + sway) * bouquetScale;
+            const sy = anchorY + pt.y * bouquetScale;
+            const stemZ = lerp(-0.02, st.spec.z - 0.08, t);
+
+            const slope = tan.x / (Math.abs(tan.y) + 0.001);
+            const stemGlyph = slope > 0.26 ? GLYPH_SLASH : slope < -0.26 ? GLYPH_BSLASH : GLYPH_PIPE;
+
+            // Emerald (#3a6e4c) -> mid sage (#5ea373) -> bright sage (#86c998)
+            const r = Math.round(lerp(58, 122, t));
+            const g = Math.round(lerp(110, 188, t));
+            const b = Math.round(lerp(76, 138, t));
+
+            plotCell(sx - cellW * 0.52, sy, stemZ + 0.004, r + 16, g + 22, b + 16, stemGlyph);
+            plotCell(sx, sy, stemZ, r, g, b, stemGlyph);
+            plotCell(sx + cellW * 0.52, sy, stemZ - 0.004, r * 0.62, g * 0.66, b * 0.65, 2);
+          }
+        }
+
+        // --- Subtle Pearl-White Satin Ribbon Tie Near Stem Base ---
+        const ribbonProg = easeOutCubic((time - 0.52) / 0.85);
+        if (ribbonProg > 0.02) {
+          const bandRows = 9;
+          const bandCols = 18;
+          const bandHalfW = 0.068 * ribbonProg;
+          const bandTop = -0.015;
+          const bandBot = 0.066;
+
+          for (let ry = 0; ry <= bandRows; ry++) {
+            const v = ry / bandRows;
+            const ny = lerp(bandTop, bandBot, v);
+            const pinch = 1 - Math.sin(v * Math.PI) * 0.14;
+            for (let rx = -bandCols; rx <= bandCols; rx++) {
+              const u = rx / bandCols;
+              const nx = u * bandHalfW * pinch;
+              const cylZ = Math.sqrt(Math.max(0, 1 - u * u)) * 0.08 + 0.56;
+
+              const light = clamp(0.46 + Math.cos((u + 0.22) * 1.7) * 0.46 + Math.sin(v * Math.PI * 3) * 0.08, 0.24, 1.0);
+              const cr = Math.round(lerp(143, 255, light));
+              const cg = Math.round(lerp(148, 252, light));
+              const cb = Math.round(lerp(160, 248, light));
+
+              const glyph = light > 0.80 ? 4 : light > 0.56 ? 3 : 2; // '=', '-', ':'
+              plotCell(anchorX + nx * bouquetScale, anchorY + ny * bouquetScale, cylZ, cr, cg, cb, glyph);
+            }
+          }
+
+          // Two delicate satin ribbon tails
+          for (let tail = -1; tail <= 1; tail += 2) {
+            const tailLen = 22;
+            const flutter = Math.sin(time * 1.85 + tail * 1.4) * 0.016 + currentPointerWind * 0.014;
+            const tp0 = { x: tail * 0.014, y: 0.050 };
+            const tp1 = { x: tail * 0.064 + flutter * 0.5, y: 0.122 };
+            const tp2 = { x: tail * 0.092 + flutter, y: 0.215 };
+
+            for (let s = 0; s <= tailLen; s++) {
+              const t = s / tailLen;
+              if (t > ribbonProg) break;
+              const pt = quadBezier(tp0, tp1, tp2, t);
+              const sx = anchorX + pt.x * bouquetScale;
+              const sy = anchorY + pt.y * bouquetScale;
+              const lum = clamp(0.90 - t * 0.34, 0.44, 0.96);
+              const gIdx = s % 3 === 0 ? 4 : (tail < 0 ? GLYPH_SLASH : GLYPH_BSLASH);
+              plotCell(sx, sy, 0.58 - t * 0.04, 252 * lum, 248 * lum, 244 * lum, gIdx);
+              plotCell(sx + tail * cellW * 0.68, sy, 0.57 - t * 0.04, 185 * lum, 188 * lum, 198 * lum, 2);
+            }
+          }
+        }
+      }
+
+      /**
+       * Rasterizes broad arching tulip leaves and classic oval 3-leaflet rose sprigs.
+       */
+      function rasterizeFoliage(time) {
+        // --- A. Arching Tulip Leaves ---
+        for (let i = 0; i < tulipLeaves.length; i++) {
+          const lf = tulipLeaves[i];
+          const prog = easeOutCubic((time - lf.delay) / lf.dur);
+          if (prog <= 0.01) continue;
+
+          const uSteps = Math.max(28, Math.round(bouquetScale * 0.115));
+          for (let ui = 1; ui <= uSteps; ui++) {
+            const u = ui / uSteps;
+            if (u > prog) break;
+
+            const c = quadBezier(lf.p0, lf.p1, lf.p2, u);
+            const tan = quadBezierTangent(lf.p0, lf.p1, lf.p2, u);
+            const mag = Math.hypot(tan.x, tan.y) || 1;
+            const nx = -tan.y / mag;
+            const ny = tan.x / mag;
+
+            const bladeW = Math.sin(Math.pow(u, 0.66) * Math.PI) * lf.maxWidth * prog;
+            const vSteps = Math.max(1, Math.ceil((bladeW * bouquetScale) / (cellW * 0.68)));
+            const sway = getSwayX(time, c.y, c.x);
+
+            for (let vi = -vSteps; vi <= vSteps; vi++) {
+              const v = vi / vSteps;
+              const absV = Math.abs(v);
+              const lx = c.x + nx * v * bladeW + sway;
+              const ly = c.y + ny * v * bladeW;
+
+              const midrib = Math.exp(-absV * absV * 11.0);
+              const edgeRim = absV > 0.82 ? 0.18 : 0;
+              const shade = clamp(0.28 + u * 0.34 + midrib * 0.36 + edgeRim - absV * 0.16, 0.18, 0.96);
+
+              // Deep emerald (#3a6e4c) -> sage (#5ea373) -> luminous sage highlight (#86c998)
+              const r = Math.round(lerp(36, 134, shade));
+              const g = Math.round(lerp(88, 201, shade));
+              const b = Math.round(lerp(56, 152, shade));
+
+              const z = lf.z + (1 - absV) * 0.025 + u * 0.01;
+              const glyph = absV < 0.18
+                ? (tan.x > 0.1 ? GLYPH_SLASH : tan.x < -0.1 ? GLYPH_BSLASH : GLYPH_PIPE)
+                : lumToGlyph(shade);
+
+              plotCell(anchorX + lx * bouquetScale, anchorY + ly * bouquetScale, z, r, g, b, glyph);
+            }
+          }
+        }
+
+        // --- B. Rose Leaf Clusters (3-Leaflet Sprigs) ---
+        const leafletOffsets = [
+          { dAng:  0.00, dist: 0.56, len: 0.95, wid: 0.44 },
+          { dAng: -0.78, dist: 0.24, len: 0.72, wid: 0.38 },
+          { dAng:  0.78, dist: 0.24, len: 0.72, wid: 0.38 }
+        ];
+
+        for (let i = 0; i < roseLeafClusters.length; i++) {
+          const rc = roseLeafClusters[i];
+          const prog = easeOutCubic((time - rc.delay) / rc.dur);
+          if (prog <= 0.02) continue;
+
+          const sway = getSwayX(time, rc.y, rc.x);
+          const sc = rc.scale * prog;
+
+          for (let li = 0; li < leafletOffsets.length; li++) {
+            const lo = leafletOffsets[li];
+            const ang = rc.angle + lo.dAng;
+            const cosA = Math.cos(ang);
+            const sinA = Math.sin(ang);
+            const ox = rc.x + Math.cos(rc.angle) * lo.dist * sc * 0.65;
+            const oy = rc.y + Math.sin(rc.angle) * lo.dist * sc * 0.65;
+
+            const uSteps = 10;
+            for (let ui = 1; ui <= uSteps; ui++) {
+              const u = ui / uSteps;
+              const w = Math.sin(Math.pow(u, 0.78) * Math.PI) * lo.wid * sc;
+              const vSteps = Math.max(1, Math.ceil((w * bouquetScale) / (cellW * 0.72)));
+
+              for (let vi = -vSteps; vi <= vSteps; vi++) {
+                const v = vi / vSteps;
+                const absV = Math.abs(v);
+                const px = ox + (u * lo.len * sc) * cosA - (v * w) * sinA + sway;
+                const py = oy + (u * lo.len * sc) * sinA + (v * w) * cosA;
+
+                const vein = Math.exp(-absV * absV * 9.0) * 0.30;
+                const shade = clamp(0.24 + u * 0.38 + vein + (v < 0 ? 0.14 : -0.08), 0.16, 0.94);
+
+                const r = Math.round(lerp(32, 118, shade));
+                const g = Math.round(lerp(82, 186, shade));
+                const b = Math.round(lerp(52, 134, shade));
+
+                const glyph = absV > 0.85 ? 6 : lumToGlyph(shade);
+                plotCell(anchorX + px * bouquetScale, anchorY + py * bouquetScale, rc.z + (1 - absV) * 0.018, r, g, b, glyph);
+              }
+            }
+          }
+        }
+      }
+
+      /**
+       * Rasterizes a sculptural 3D spiraling White Rose into the ASCII Z-buffer.
+       * Includes a soft dark-core depth mask so each rose separates crisply from
+       * neighboring blooms and stems, with bright snow-white (#ffffff) rolled rims,
+       * pearl petals (#ebe8e2), warm champagne-ivory hearts (#f5ead6), and cool
+       * silver-slate folds (#8f96a3).
+       */
+      function rasterizeWhiteRose(spec, time) {
+        const rawBloom = (time - spec.bloomStart) / spec.bloomDur;
+        if (rawBloom <= -0.15) return;
+
+        const budP = easeOutCubic((rawBloom + 0.15) / 0.35);
+        const bloomP = easeInOutCubic(clamp(rawBloom, 0, 1));
+        if (budP <= 0.01) return;
+
+        const breathe = bloomP > 0.82 ? Math.sin(time * 1.32 + spec.id * 1.7) * 0.022 : 0;
+        const openFactor = clamp(bloomP + breathe, 0, 1.04);
+
+        const sway = getSwayX(time, spec.tipY, spec.tipX);
+        const cx = anchorX + (spec.tipX + sway) * bouquetScale;
+        const cy = anchorY + spec.tipY * bouquetScale;
+        const roseRadius = spec.scale * bouquetScale * lerp(0.32, 1.0, budP) * lerp(0.55, 1.0, bloomP);
+
+        // --- Soft 3D Occlusion Backing Disc (prevents rear blooms/stems bleeding through) ---
+        const maskR = roseRadius * 0.88;
+        const maskCols = Math.ceil(maskR / cellW);
+        const maskRows = Math.ceil(maskR / cellH);
+        const maskZ = spec.z - 0.028;
+        for (let my = -maskRows; my <= maskRows; my++) {
+          const dy = my * cellH;
+          for (let mx = -maskCols; mx <= maskCols; mx++) {
+            const dx = mx * cellW;
+            if (dx * dx + dy * dy <= maskR * maskR) {
+              plotCell(cx + dx, cy + dy, maskZ, 0, 0, 0, GLYPH_SPACE);
+            }
+          }
+        }
+
+        // 3D tilt matrices
+        const tx = spec.tiltX + sway * 1.35;
+        const ty = spec.tiltY;
+        const cosTX = Math.cos(tx), sinTX = Math.sin(tx);
+        const cosTY = Math.cos(ty), sinTY = Math.sin(ty);
+
+        const totalPetals = spec.petals || 32;
+        const GOLDEN_ANGLE = 2.39996323;
+        const uSteps = clamp(Math.round(roseRadius / (cellH * 0.72)), 8, 15);
+
+        for (let k = 0; k < totalPetals; k++) {
+          const frac = k / (totalPetals - 1); // 0 = inner spiral heart, 1 = outermost petal
+          const petalOpen = easeOutCubic(clamp((openFactor - (1 - frac) * 0.22) / 0.78, 0, 1));
+
+          const theta = k * GOLDEN_ANGLE + spec.rot + petalOpen * 0.22;
+          const rStart = Math.pow(frac, 0.78) * 0.56 * lerp(0.44, 1.0, petalOpen);
+          const pLength = lerp(0.28, 0.56, frac) * lerp(0.62, 1.04, petalOpen);
+          const arcHalf = lerp(0.56, 0.45, frac) * lerp(0.75, 1.04, petalOpen);
+
+          const pitch = lerp(0.18, 1.10, Math.pow(frac, 0.82) * petalOpen);
+          const zBase = (1 - frac) * 0.16;
+
+          const vSteps = clamp(Math.round((roseRadius * (rStart + pLength * 0.62) * arcHalf * 2) / (cellW * 0.68)), 6, 16);
+
+          for (let ui = 0; ui <= uSteps; ui++) {
+            const u = ui / uSteps; // 0 = shadowed fold crevice, 1 = bright rolled outer rim
+            const widthCurve = Math.sin(Math.pow(u, 0.58) * Math.PI * 0.92);
+            const curlOut = u * u * 0.26 * frac * petalOpen;
+
+            for (let vi = -vSteps; vi <= vSteps; vi++) {
+              const v = vi / vSteps;
+              const absV = Math.abs(v);
+
+              // Subtle heart-shaped contour on outer petals
+              const rimNotch = u > 0.82 ? (1 - Math.exp(-absV * absV * 5.0)) * 0.04 * frac : 0;
+              const localU = u + rimNotch;
+
+              const ang = theta + v * arcHalf * (0.45 + 0.55 * widthCurve);
+              const rad = rStart + localU * pLength * Math.sin(pitch + curlOut + 0.28);
+
+              // Cupped spiral dome Z-height
+              const cupZ =
+                zBase +
+                Math.sin(localU * Math.PI * 0.78) * 0.24 * (1 - frac * 0.34) +
+                (1 - absV * absV) * 0.06 -
+                (localU > 0.84 ? (localU - 0.84) * 0.42 * frac : 0);
+
+              const lx = Math.cos(ang) * rad;
+              const ly = Math.sin(ang) * rad;
+              const lz = cupZ;
+
+              const rx1 = lx * cosTX + lz * sinTX;
+              const rz1 = -lx * sinTX + lz * cosTX;
+              const ry2 = ly * cosTY - rz1 * sinTY;
+              const rz2 = ly * sinTY + rz1 * cosTY;
+
+              const persp = 1 / (1 - rz2 * 0.22);
+              const sx = cx + rx1 * roseRadius * persp;
+              const sy = cy + ry2 * roseRadius * persp;
+              const worldZ = spec.z + rz2 * 0.25 + (1 - frac) * 0.018;
+
+              // --- High-Contrast Sculptural White Rose Shading ---
+              const creviceAO = Math.pow(clamp(u, 0, 1), 0.88);
+              const rimHighlight = Math.pow(clamp((u - 0.58) / 0.42, 0, 1), 1.45);
+              const dirLight = clamp(0.58 + (-rx1 * 0.40 - ry2 * 0.46 + rz2 * 0.56) * 0.48, 0.24, 1.0);
+
+              const lum = clamp(
+                0.15 + creviceAO * 0.50 * dirLight + rimHighlight * 0.56 - absV * 0.09,
+                0.14,
+                1.0
+              );
+
+              const heartWarmth = Math.pow(1 - frac, 1.75);
+              let r, g, b;
+
+              if (lum < 0.42) {
+                // Cool silver-slate fold shadow (#8f96a3 & deeper slate)
+                const t = lum / 0.42;
+                const dR = lerp(ROSE_PALETTE.slateDeep[0], ROSE_PALETTE.warmShade[0], heartWarmth * 0.6);
+                const dG = lerp(ROSE_PALETTE.slateDeep[1], ROSE_PALETTE.warmShade[1], heartWarmth * 0.6);
+                const dB = lerp(ROSE_PALETTE.slateDeep[2], ROSE_PALETTE.warmShade[2], heartWarmth * 0.6);
+                r = lerp(dR, ROSE_PALETTE.slateMid[0], t);
+                g = lerp(dG, ROSE_PALETTE.slateMid[1], t);
+                b = lerp(dB, ROSE_PALETTE.slateMid[2], t);
+              } else if (lum < 0.74) {
+                // Luminous pearl body (#ebe8e2) / warm champagne-ivory center (#f5ead6)
+                const t = (lum - 0.42) / 0.32;
+                const mR = lerp(ROSE_PALETTE.pearl[0], ROSE_PALETTE.champagne[0], heartWarmth);
+                const mG = lerp(ROSE_PALETTE.pearl[1], ROSE_PALETTE.champagne[1], heartWarmth);
+                const mB = lerp(ROSE_PALETTE.pearl[2], ROSE_PALETTE.champagne[2], heartWarmth);
+                r = lerp(ROSE_PALETTE.slateMid[0], mR, t);
+                g = lerp(ROSE_PALETTE.slateMid[1], mG, t);
+                b = lerp(ROSE_PALETTE.slateMid[2], mB, t);
+              } else {
+                // Crisp radiant snow-white rolled petal crest (#ffffff)
+                const t = (lum - 0.74) / 0.26;
+                const mR = lerp(ROSE_PALETTE.pearl[0], ROSE_PALETTE.champagne[0], heartWarmth * 0.45);
+                const mG = lerp(ROSE_PALETTE.pearl[1], ROSE_PALETTE.champagne[1], heartWarmth * 0.45);
+                const mB = lerp(ROSE_PALETTE.pearl[2], ROSE_PALETTE.champagne[2], heartWarmth * 0.45);
+                r = lerp(mR, ROSE_PALETTE.snow[0], t);
+                g = lerp(mG, ROSE_PALETTE.snow[1], t);
+                b = lerp(mB, ROSE_PALETTE.snow[2], t);
+              }
+
+              const rimBoost = rimHighlight > 0.58 ? 0.12 : 0;
+              plotCell(sx, sy, worldZ, r, g, b, lumToGlyph(clamp(lum + rimBoost, 0.14, 0.99)));
+            }
+          }
+        }
+      }
+
+      /**
+       * Rasterizes a graceful 6-petal cupped Tulip (3 inner + 3 overlapping outer petals)
+       * into the Z-buffer grid with luminous vertical/lateral shading and crisp rims.
+       */
+      function rasterizeTulip(spec, time) {
+        const rawBloom = (time - spec.bloomStart) / spec.bloomDur;
+        if (rawBloom <= -0.18) return;
+
+        const budP = easeOutCubic((rawBloom + 0.18) / 0.36);
+        const bloomP = easeInOutCubic(clamp(rawBloom, 0, 1));
+        if (budP <= 0.01) return;
+
+        const pal = TULIP_PALETTES[spec.palette];
+        const breathe = bloomP > 0.80 ? Math.sin(time * 1.25 + spec.id * 1.4) * 0.024 : 0;
+        const openP = clamp(bloomP + breathe, 0, 1.05);
+
+        const sway = getSwayX(time, spec.tipY, spec.tipX);
+        const baseX = anchorX + (spec.tipX + sway) * bouquetScale;
+        const baseY = anchorY + spec.tipY * bouquetScale;
+
+        const cupScale = spec.scale * bouquetScale * lerp(0.38, 1.0, budP);
+        const cupHeight = 1.50 * lerp(0.76, 1.04, openP);
+        const cupWidth = 0.64 * lerp(0.56, 1.06, openP);
+
+        const leanAng = spec.lean + sway * 1.6;
+        const cosL = Math.cos(leanAng), sinL = Math.sin(leanAng);
+        const cosF = Math.cos(spec.tiltFwd), sinF = Math.sin(spec.tiltFwd);
+
+        const uSteps = clamp(Math.round((cupScale * cupHeight) / (cellH * 0.62)), 13, 22);
+        const vSteps = clamp(Math.round((cupScale * cupWidth) / (cellW * 0.68)), 7, 14);
+
+        // 6 petals: 3 inner (even) + 3 overlapping outer (odd)
+        for (let p = 0; p < 6; p++) {
+          const isOuter = p % 2 === 1;
+          const basePhi = (p / 6) * Math.PI * 2 + spec.rot;
+
+          const layerRadial = isOuter ? 1.06 : 0.90;
+          const topFlare = (isOuter ? 0.24 : 0.11) * openP;
+          const arcSpan = isOuter ? 0.78 : 0.74;
+
+          for (let ui = 0; ui <= uSteps; ui++) {
+            const u = ui / uSteps;
+            const belly = Math.sin(Math.pow(u, 0.62) * Math.PI * 0.84);
+            const rProfile = (0.14 + belly * 0.86 + u * u * topFlare) * cupWidth * layerRadial;
+            const tipTaper = u < 0.66 ? 1.0 : Math.cos(((u - 0.66) / 0.34) * Math.PI * 0.44);
+
+            for (let vi = -vSteps; vi <= vSteps; vi++) {
+              const v = vi / vSteps;
+              const absV = Math.abs(v);
+
+              // Rounded-pointed tulip tip contour
+              const tipClip = u - (1 - Math.sqrt(Math.max(0, 1 - absV * absV))) * 0.14;
+              if (tipClip > 1.0) continue;
+
+              const phi = basePhi + v * arcSpan * (0.42 + 0.58 * tipTaper);
+              const cosP = Math.cos(phi);
+              const sinP = Math.sin(phi);
+
+              const lx = cosP * rProfile;
+              const lz = sinP * rProfile;
+              const ly = -u * cupHeight;
+
+              // Forward tilt + stem lean rotation
+              const fy = ly * cosF - lz * sinF;
+              const fz = ly * sinF + lz * cosF;
+              const rx = lx * cosL - fy * sinL;
+              const ry = lx * sinL + fy * cosL;
+
+              const persp = 1 / (1 - fz * 0.18);
+              const sx = baseX + rx * cupScale * persp;
+              const sy = baseY + ry * cupScale * persp;
+              const worldZ = spec.z + fz * 0.22 + (isOuter ? 0.010 : -0.008);
+
+              // 3D goblet shading with bright curved rims
+              const isFrontSide = sinP >= -0.15;
+              const keyDot = clamp((-cosP * 0.40 + sinP * 0.82 + 0.28) * 0.80, 0.22, 1.0);
+              const insideDepth = isFrontSide ? 1.0 : 0.65 + u * 0.28;
+              const overlapCrease = 1 - Math.pow(absV, 2.4) * 0.24;
+              const rimGlow = Math.pow(clamp((u - 0.68) / 0.32, 0, 1), 1.45);
+              const rib = (1 - absV * absV) * 0.12;
+
+              const shade = clamp(
+                (0.24 + u * 0.44 + rib) * keyDot * insideDepth * overlapCrease + rimGlow * 0.38,
+                0.16,
+                1.0
+              );
+
+              let r, g, b;
+              if (u < 0.24) {
+                const t = u / 0.24;
+                r = lerp(pal.base[0], pal.shadow[0], t);
+                g = lerp(pal.base[1], pal.shadow[1], t);
+                b = lerp(pal.base[2], pal.shadow[2], t);
+              } else if (u < 0.74) {
+                const t = (u - 0.24) / 0.50;
+                r = lerp(pal.shadow[0], pal.mid[0], t);
+                g = lerp(pal.shadow[1], pal.mid[1], t);
+                b = lerp(pal.shadow[2], pal.mid[2], t);
+              } else {
+                const t = (u - 0.74) / 0.26;
+                r = lerp(pal.mid[0], pal.rim[0], t);
+                g = lerp(pal.mid[1], pal.rim[1], t);
+                b = lerp(pal.mid[2], pal.rim[2], t);
+              }
+
+              const lightMod = lerp(0.64, 1.16, shade);
+              const rimSpec = rimGlow * 32;
+              const fr = clamp(r * lightMod + rimSpec, 0, 255);
+              const fg = clamp(g * lightMod + rimSpec, 0, 255);
+              const fb = clamp(b * lightMod + rimSpec, 0, 255);
+
+              const glyph = rimGlow > 0.62 && isFrontSide
+                ? lumToGlyph(clamp(shade + 0.16, 0.55, 0.99))
+                : lumToGlyph(shade);
+
+              plotCell(sx, sy, worldZ, fr, fg, fb, glyph);
+            }
+          }
+        }
+      }
+
+      /**
+       * Rasterizes delicate twinkling white Baby's Breath accents around the bouquet.
+       */
+      function rasterizeBabysBreath(time) {
+        for (let i = 0; i < babysBreath.length; i++) {
+          const cluster = babysBreath[i];
+          const sway = getSwayX(time, cluster.y, cluster.x);
+          const cx = cluster.x + sway;
+          const cy = cluster.y;
+
+          for (let d = 0; d < cluster.dots.length; d++) {
+            const dot = cluster.dots[d];
+            const appear = easeOutCubic((time - dot.delay) / 0.75);
+            if (appear <= 0.05) continue;
+
+            const twinkle = 0.66 + 0.34 * Math.sin(time * 2.5 + dot.phase);
+            const bright = appear * twinkle;
+            const sx = anchorX + (cx + dot.dx) * bouquetScale;
+            const sy = anchorY + (cy + dot.dy) * bouquetScale;
+
+            plotCell(sx, sy, cluster.z + dot.dz, 255 * bright, 252 * bright, 248 * bright, dot.glyphIdx);
+          }
+        }
+      }
+
+      // =========================================================================
+      // 10. BACKGROUND STARLIGHT & FOREGROUND SPARKLE OVERLAYS
+      // =========================================================================
+      function renderBackgroundStars(dt, time) {
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        for (let i = 0; i < bgStars.length; i++) {
+          const s = bgStars[i];
+          s.x += (s.vx + currentPointerWind * 3.5) * dt;
+          s.y += s.vy * dt;
+
+          if (s.y < -12) { s.y = height + 12; s.x = Math.random() * width; }
+          if (s.x < -12) s.x = width + 12;
+          if (s.x > width + 12) s.x = -12;
+
+          const twinkle = 0.50 + 0.50 * Math.sin(time * s.speed + s.phase);
+          const alpha = s.alpha * twinkle;
+
+          ctx.font = `400 ${s.size | 0}px "JetBrains Mono", monospace`;
+          ctx.fillStyle = `rgba(232, 234, 244, ${alpha.toFixed(3)})`;
+          ctx.fillText(s.char, s.x, s.y);
+        }
+      }
+
+      function renderForegroundSparkles(dt, time) {
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        if (time > 2.8 && ambientSparkles.length < 28 && Math.random() < dt * 6.0) {
+          spawnAmbientSparkle();
+        }
+
+        for (let i = ambientSparkles.length - 1; i >= 0; i--) {
+          const sp = ambientSparkles[i];
+          sp.life += dt;
+          if (sp.life >= sp.maxLife) {
+            ambientSparkles.splice(i, 1);
+            continue;
+          }
+
+          sp.x += (sp.vx + Math.sin(time * 1.8 + i) * 5 + currentPointerWind * 14) * dt;
+          sp.y += sp.vy * dt;
+
+          const t = sp.life / sp.maxLife;
+          const alpha = Math.sin(t * Math.PI) * 0.78;
+          ctx.font = `600 ${sp.size | 0}px "JetBrains Mono", monospace`;
+          ctx.fillStyle = `rgba(${sp.color[0]},${sp.color[1]},${sp.color[2]},${alpha.toFixed(3)})`;
+          ctx.fillText(sp.char, sp.x, sp.y);
+        }
+
+        for (let i = burstParticles.length - 1; i >= 0; i--) {
+          const bp = burstParticles[i];
+          bp.life += dt;
+          if (bp.life >= bp.maxLife) {
+            burstParticles.splice(i, 1);
+            continue;
+          }
+
+          bp.vx *= Math.pow(0.18, dt);
+          bp.vy = bp.vy * Math.pow(0.28, dt) - 12 * dt;
+          bp.x += bp.vx * dt;
+          bp.y += bp.vy * dt;
+
+          const t = bp.life / bp.maxLife;
+          const alpha = (1 - t) * (1 - t) * 0.96;
+          ctx.font = `600 ${bp.size | 0}px "JetBrains Mono", monospace`;
+          ctx.fillStyle = `rgba(${bp.color[0]},${bp.color[1]},${bp.color[2]},${alpha.toFixed(3)})`;
+          ctx.fillText(bp.char, bp.x, bp.y);
+        }
+      }
+
+      // =========================================================================
+      // 11. RESPONSIVE LAYOUT, SAFE BREATHING ROOM & ANIMATION LOOP
+      // =========================================================================
+      function handleResize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        allocateGrid();
+
+        // Measure actual top header & bottom control bar so the bouquet NEVER overlaps them
+        const headerRect = headerEl.getBoundingClientRect();
+        const barRect = controlBarEl.getBoundingClientRect();
+
+        const safeTop = Math.max(headerRect.bottom + 18, height * 0.22, 136);
+        const barHeight = barRect.height ? (height - barRect.top) : 76;
+        const safeBottom = Math.max(barHeight + 16, 84);
+
+        const availH = Math.max(200, height - safeTop - safeBottom);
+        const availW = width * 0.92;
+
+        // Bouquet spans y in [-1.09, +0.22] (height ~1.31) and x in [-0.59, +0.59] (width ~1.18)
+        bouquetScale = Math.min(availH / 1.31, availW / 1.18);
+        anchorX = width * 0.5;
+
+        // Vertically center the bouquet comfortably within the safe area
+        const bouquetVisualH = bouquetScale * 1.31;
+        const topOfBouquet = safeTop + (availH - bouquetVisualH) * 0.5;
+        anchorY = topOfBouquet + bouquetScale * 1.09;
+
+        initStarfield();
+      }
+
+      function animate(timestamp) {
+        if (!startTime) {
+          startTime = timestamp;
+          lastTimestamp = timestamp;
+        }
+
+        const dt = Math.min(0.05, (timestamp - lastTimestamp) / 1000);
+        lastTimestamp = timestamp;
+        elapsed = (timestamp - startTime) / 1000;
+
+        breezeImpulse *= Math.pow(0.18, dt);
+        if (breezeImpulse < 0.002) breezeImpulse = 0;
+
+        targetPointerWind *= Math.pow(0.65, dt);
+        currentPointerWind += (targetPointerWind - currentPointerWind) * clamp(dt * 3.5, 0, 1);
+
+        // 1. Midnight-black canvas backdrop (#050507)
+        ctx.fillStyle = '#050507';
+        ctx.fillRect(0, 0, width, height);
+
+        // 2. Subtle twinkling starlight dust
+        renderBackgroundStars(dt, elapsed);
+
+        // 3. Clear & rasterize 3D stems, foliage, white roses, tulips & baby's breath
+        clearGrid();
+        rasterizeStemsAndRibbon(elapsed);
+        rasterizeFoliage(elapsed);
+
+        for (let i = 0; i < BLOOM_SPECS.length; i++) {
+          const spec = BLOOM_SPECS[i];
+          if (spec.type === 'rose') {
+            rasterizeWhiteRose(spec, elapsed);
+          } else {
+            rasterizeTulip(spec, elapsed);
+          }
+        }
+
+        rasterizeBabysBreath(elapsed);
+
+        // 4. Flush occupied Z-buffer cells to canvas
+        flushGridToCanvas();
+
+        // 5. Floating starlight & tap bursts
+        renderForegroundSparkles(dt, elapsed);
+
+        // 6. Reveal dedication header gracefully as bouquet nears full bloom
+        if (!headerShown && elapsed >= 2.9) {
+          headerShown = true;
+          headerEl.classList.add('visible');
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      function replayAnimation() {
+        startTime = performance.now();
+        lastTimestamp = startTime;
+        elapsed = 0;
+        breezeImpulse = 0;
+        ambientSparkles.length = 0;
+        headerShown = false;
+        headerEl.classList.remove('visible');
+      }
+
+      // =========================================================================
+      // 12. EVENT LISTENERS (CANVAS, CONTROLS, LETTER MODAL, KEYBOARD)
+      // =========================================================================
+      canvas.addEventListener('pointerdown', function (e) {
+        if (isLetterOpen) return;
+        spawnTapBurst(e.clientX, e.clientY);
+      });
+
+      window.addEventListener('pointermove', function (e) {
+        if (isLetterOpen) return;
+        const normX = (e.clientX / Math.max(1, width)) * 2 - 1;
+        targetPointerWind = clamp(normX, -1, 1);
+      });
+
+      // Dedication title toggles smoothly between For Myat Noe & For Mama
+      titleEl.addEventListener('click', function (e) {
+        e.stopPropagation();
+        toggleRecipient();
+      });
+
+      titleEl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleRecipient();
+        }
+      });
+
+      // Bottom control bar buttons
+      btnMyatNoe.addEventListener('click', function (e) {
+        e.stopPropagation();
+        applyRecipient('myatnoe', true);
+      });
+
+      btnMama.addEventListener('click', function (e) {
+        e.stopPropagation();
+        applyRecipient('mama', true);
+      });
+
+      btnLetter.addEventListener('click', function (e) {
+        e.stopPropagation();
+        openLetterModal();
+      });
+
+      btnReplay.addEventListener('click', function (e) {
+        e.stopPropagation();
+        replayAnimation();
+      });
+
+      // Prevent taps on control bar from triggering canvas sparkles
+      controlBarEl.addEventListener('pointerdown', function (e) {
+        e.stopPropagation();
+      });
+
+      // Letter modal close interactions (prevent canvas sparkles inside modal)
+      letterModal.addEventListener('pointerdown', function (e) {
+        e.stopPropagation();
+      });
+
+      letterModal.addEventListener('click', function (e) {
+        if (e.target === letterModal) {
+          closeLetterModal();
+        }
+      });
+
+      letterCard.addEventListener('click', function (e) {
+        e.stopPropagation();
+      });
+
+      btnCloseLetterTop.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeLetterModal();
+      });
+
+      btnCloseLetterBottom.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeLetterModal();
+      });
+
+      window.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isLetterOpen) {
+          closeLetterModal();
+        }
+      });
+
+      window.addEventListener('resize', handleResize);
+
+      // Start smoothly on window load and re-check layout once web fonts settle
+      window.onload = function () {
+        try {
+          initRecipientFromURL();
+          buildBotanicals();
+          handleResize();
+
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(handleResize).catch(function () {});
+          }
+
+          requestAnimationFrame(animate);
+        } catch (err) {
+          console.error('Failed to initialize White Roses & Tulips ASCII bouquet:', err);
+        }
+      };
+    })();
+  </script>
+</body>
+</html>
